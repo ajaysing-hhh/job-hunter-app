@@ -1,15 +1,12 @@
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-
 import 'job_api_service.dart';
 import 'job_match.dart';
-import 'notification_service.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  
+  // 🚨 DISABLED: This is what caused the black screen
+  // await Firebase.initializeApp();
 
   runApp(const JobMatcherApp());
 }
@@ -35,26 +32,17 @@ class JobMatchesPage extends StatefulWidget {
 }
 
 class _JobMatchesPageState extends State<JobMatchesPage> {
+  // This IP looks for a backend server. We will catch the error gracefully if it fails.
   final _jobService = JobApiService('http://10.0.2.2:8000');
-  final _notificationService = NotificationService(
-    FirebaseMessaging.instance,
-    FlutterLocalNotificationsPlugin(),
-  );
-
   late Future<List<JobMatch>> _matchesFuture;
 
   @override
   void initState() {
     super.initState();
     _matchesFuture = _jobService.fetchMatches();
-    _configureNotifications();
-  }
-
-  Future<void> _configureNotifications() async {
-    final token = await _notificationService.initialize();
-    if (token != null) {
-      await _jobService.registerPushToken(token);
-    }
+    
+    // 🚨 DISABLED: Firebase notifications
+    // _configureNotifications();
   }
 
   Future<void> _refreshMatches() async {
@@ -67,7 +55,7 @@ class _JobMatchesPageState extends State<JobMatchesPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Resume-Matched Job Alerts'),
+        title: const Text('AgentOS Hunter UI'),
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
@@ -83,7 +71,14 @@ class _JobMatchesPageState extends State<JobMatchesPage> {
           }
 
           if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
+            // Instead of a black screen, we show this message while the UI stays alive
+            return const Center(
+              child: Text(
+                'UI Loaded Successfully!\n(Backend not connected yet)', 
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              )
+            );
           }
 
           final matches = snapshot.data ?? [];
