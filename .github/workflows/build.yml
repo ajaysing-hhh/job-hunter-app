@@ -32,8 +32,12 @@ jobs:
         run: |
           rm -rf android
           flutter create .
-          # Aggressively forces minSdkVersion to 23 no matter how it is formatted
+          # 1. Force minimum SDK to 23 for Firebase
           sed -i 's/minSdkVersion.*/minSdkVersion 23/g' android/app/build.gradle
+          # 2. Force target SDK to 34 (Android 14) so modern phones allow the install
+          sed -i 's/targetSdkVersion.*/targetSdkVersion 34/g' android/app/build.gradle
+          # 3. Force compile SDK to 34 to match
+          sed -i 's/compileSdkVersion.*/compileSdkVersion 34/g' android/app/build.gradle
 
       - name: Build APK
         working-directory: ./android_app_flutter
