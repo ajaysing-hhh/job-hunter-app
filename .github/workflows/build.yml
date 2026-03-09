@@ -27,17 +27,15 @@ jobs:
         working-directory: ./android_app_flutter 
         run: flutter pub get
 
-      - name: The Bulletproof Android Fix
+      - name: The Surgical Android Fix
         working-directory: ./android_app_flutter
         run: |
           rm -rf android
           flutter create .
-          # 1. Force minimum SDK to 23 for Firebase
-          sed -i 's/minSdkVersion.*/minSdkVersion 23/g' android/app/build.gradle
-          # 2. Force target SDK to 34 (Android 14) so modern phones allow the install
-          sed -i 's/targetSdkVersion.*/targetSdkVersion 34/g' android/app/build.gradle
-          # 3. Force compile SDK to 34 to match
-          sed -i 's/compileSdkVersion.*/compileSdkVersion 34/g' android/app/build.gradle
+          # Safely swaps the internal Flutter variables for modern Android integers
+          sed -i 's/flutter\.minSdkVersion/23/g' android/app/build.gradle
+          sed -i 's/flutter\.targetSdkVersion/34/g' android/app/build.gradle
+          sed -i 's/flutter\.compileSdkVersion/34/g' android/app/build.gradle
 
       - name: Build APK
         working-directory: ./android_app_flutter
