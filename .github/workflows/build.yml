@@ -27,12 +27,13 @@ jobs:
         working-directory: ./android_app_flutter 
         run: flutter pub get
 
-      # 🚀 THE FIX: Delete the bad AI code and generate fresh, modern Android files
-      - name: Fix Broken AI Gradle
+      - name: The Bulletproof Android Fix
         working-directory: ./android_app_flutter
         run: |
           rm -rf android
           flutter create .
+          # Aggressively forces minSdkVersion to 23 no matter how it is formatted
+          sed -i 's/minSdkVersion.*/minSdkVersion 23/g' android/app/build.gradle
 
       - name: Build APK
         working-directory: ./android_app_flutter
