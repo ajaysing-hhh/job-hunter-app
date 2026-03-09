@@ -1,0 +1,2 @@
+Experienced software engineer with skills in Flutter, Android app development, Python backend APIs,
+FastAPI services, machine learning, recommendation systems, and cloud messaging notifications.
